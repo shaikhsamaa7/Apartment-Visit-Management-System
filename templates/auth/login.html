@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Sign In - AVMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="background-color: #0f172a;">
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo-badge">AV</div>
+                <h1 class="auth-title">Apartment Portal</h1>
+                <p class="auth-subtitle">Visit Management System (AVMS)</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                <span>{{ message }}</span>
+                                <button type="button" class="alert-close">&times;</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input class="form-control" type="text" id="username" name="username" value="{{ username or '' }}" placeholder="e.g. admin" required autofocus autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label class="form-label" for="password" style="margin-bottom: 0;">Password</label>
+                        <a href="{{ url_for('auth.forgot_password') }}" style="font-size: 0.8rem;">Forgot password?</a>
+                    </div>
+                    <input class="form-control" type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <button class="btn btn-primary" type="submit" style="width: 100%; justify-content: center; padding: 11px;">
+                        <span>Sign In to Dashboard</span>
+                    </button>
+                </div>
+            </form>
+
+            <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-subtle); text-align: center;">
+                <p style="font-size: 0.78rem; color: var(--text-muted);">
+                    Default Seed Credentials: <code>admin</code> / <code>Test@123</code>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

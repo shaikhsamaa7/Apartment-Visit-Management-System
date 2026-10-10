@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Visitors{% endblock %}
+{% block page_heading %}Visitor Management Registry{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="flex-wrap: wrap; gap: 14px;">
+        <div>
+            <h2 class="card-title">All Registered Visitors</h2>
+            <p class="card-subtitle">Complete registry of apartment visits with real-time status</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <a href="{{ url_for('visitors.export_csv') }}" class="btn btn-secondary btn-sm" title="Export Visitor Registry">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Export CSV</span>
+            </a>
+            <a href="{{ url_for('visitors.add') }}" class="btn btn-primary btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>New Visitor</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div style="padding: 16px 24px; background-color: #f8fafc; border-bottom: 1px solid var(--border-subtle);">
+        <form method="GET" action="{{ url_for('visitors.manage') }}" style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="category" style="font-size: 0.82rem; font-weight: 500; color: var(--text-muted);">Category:</label>
+                <select name="category" id="category" class="form-control" style="width: auto; padding: 6px 10px; font-size: 0.85rem;" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    {% for c in categories %}
+                        <option value="{{ c.categoryName }}" {% if selected_category == c.categoryName %}selected{% endif %}>
+                            {{ c.categoryName }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="status" style="font-size: 0.82rem; font-weight: 500; color: var(--text-muted);">Status:</label>
+                <select name="status" id="status" class="form-control" style="width: auto; padding: 6px 10px; font-size: 0.85rem;" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="inside" {% if selected_status == 'inside' %}selected{% endif %}>Inside Premises</option>
+                    <option value="checked_out" {% if selected_status == 'checked_out' %}selected{% endif %}>Checked Out</option>
+                </select>
+            </div>
+
+            {% if selected_category or selected_status %}
+                <a href="{{ url_for('visitors.manage') }}" class="btn btn-secondary btn-sm">Clear Filters</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        {% if visitors %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">S.No</th>
+                        <th>Visitor Name</th>
+                        <th>Category</th>
+                        <th>Contact Number</th>
+                        <th>Apartment</th>
+                        <th>Whom to Meet</th>
+                        <th>Entry Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in visitors %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <strong>{{ v.VisitorName }}</strong>
+                            </td>
+                            <td>
+                                <span class="badge badge-neutral">{{ v.categoryName }}</span>
+                            </td>
+                            <td><code>{{ v.MobileNumber }}</code></td>
+                            <td>{{ v.Apartment }} (Fl {{ v.Floor }})</td>
+                            <td>{{ v.WhomtoMeet }}</td>
+                            <td>{{ v.EnterDate }}</td>
+                            <td>
+                                {% if v.remark %}
+                                    <span class="badge badge-neutral">Checked Out</span>
+                                {% else %}
+                                    <span class="badge badge-success">Inside</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('visitors.detail', visitor_id=v.ID) }}" class="btn btn-primary btn-sm">
+                                    {% if not v.remark %}Check Out / Details{% else %}View Details{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <p class="empty-state-title">No Visitor Records Match Criteria</p>
+                <p class="empty-state-desc">Try clearing filters or registering a new visitor.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

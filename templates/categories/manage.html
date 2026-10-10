@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Visitor Categories{% endblock %}
+{% block page_heading %}Category Management{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+    <!-- Add Category Form -->
+    <div class="card" style="height: fit-content;">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title">Add Category</h2>
+                <p class="card-subtitle">Define visitor classifications (e.g. Courier, Delivery, Electrician)</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('categories.manage') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-group">
+                    <label class="form-label" for="categoryname">Category Name <span class="required">*</span></label>
+                    <input class="form-control" type="text" id="categoryname" name="categoryname" placeholder="e.g. Electrician, Plumber" required autofocus>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    <span>Add Category</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Categories List -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title">Existing Categories</h2>
+                <p class="card-subtitle">All active visitor categories with usage volume</p>
+            </div>
+            <span class="badge badge-neutral">{{ categories|length }} Categories</span>
+        </div>
+
+        <div class="table-responsive">
+            {% if categories %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">S.No</th>
+                            <th>Category</th>
+                            <th>Visits</th>
+                            <th>Passes</th>
+                            <th>Created Date</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in categories %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><strong>{{ c.categoryName }}</strong></td>
+                                <td><span class="badge badge-neutral">{{ c.visitor_count }}</span></td>
+                                <td><span class="badge badge-neutral">{{ c.pass_count }}</span></td>
+                                <td style="font-size: 0.8rem; color: var(--text-muted);">{{ c.creationDate }}</td>
+                                <td style="text-align: right;">
+                                    <form action="{{ url_for('categories.delete', cat_id=c.id) }}" method="POST" style="display: inline-block;" data-confirm="Are you sure you want to delete category '{{ c.categoryName }}'?">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <p class="empty-state-title">No Categories Found</p>
+                    <p class="empty-state-desc">Add your first category using the form on the left.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

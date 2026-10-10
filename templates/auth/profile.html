@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Profile{% endblock %}
+{% block page_heading %}Admin Profile{% endblock %}
+
+{% block content %}
+<div style="max-width: 640px; margin: 0 auto;">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title">Administrator Account Details</h2>
+                <p class="card-subtitle">Manage administrative contact coordinates and profile name</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('auth.profile') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input class="form-control" type="text" id="username" value="{{ admin.UserName }}" disabled style="background-color: #f1f5f9; cursor: not-allowed;">
+                    <span class="form-help">Username cannot be changed.</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="adminname">Admin Full Name <span class="required">*</span></label>
+                    <input class="form-control" type="text" id="adminname" name="adminname" value="{{ admin.AdminName or '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="mobilenumber">Mobile Number <span class="required">*</span></label>
+                    <input class="form-control" type="text" id="mobilenumber" name="mobilenumber" value="{{ admin.MobileNumber or '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+                    <input class="form-control" type="email" id="email" name="email" value="{{ admin.Email or '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Registration Date</label>
+                    <input class="form-control" type="text" value="{{ admin.AdminRegdate }}" disabled style="background-color: #f1f5f9; cursor: not-allowed;">
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

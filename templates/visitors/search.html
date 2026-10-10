@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Search Visitors{% endblock %}
+{% block page_heading %}Search Visitors{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">Search Visitor Records</h2>
+            <p class="card-subtitle">Locate visitor check-in records by name, contact number, apartment, or resident</p>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('visitors.search') }}" style="display: flex; gap: 12px; max-width: 650px;">
+            <input type="text" name="q" class="form-control" placeholder="Search by visitor name, mobile, apartment (e.g. Amit, 9876, A-101)..." value="{{ query }}" required autofocus>
+            <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Search</span>
+            </button>
+            {% if query %}
+                <a href="{{ url_for('visitors.search') }}" class="btn btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if query %}
+        <div style="padding: 12px 24px; background: #f8fafc; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+            <span style="font-size: 0.9rem; color: var(--text-muted);">
+                Search results for: <strong>"{{ query }}"</strong> ({{ results|length }} record{{ 's' if results|length != 1 else '' }} found)
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            {% if results %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">S.No</th>
+                            <th>Visitor Name</th>
+                            <th>Category</th>
+                            <th>Mobile Number</th>
+                            <th>Apartment</th>
+                            <th>Whom to Meet</th>
+                            <th>Entry Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in results %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><strong>{{ v.VisitorName }}</strong></td>
+                                <td><span class="badge badge-neutral">{{ v.categoryName }}</span></td>
+                                <td><code>{{ v.MobileNumber }}</code></td>
+                                <td>{{ v.Apartment }} (Fl {{ v.Floor }})</td>
+                                <td>{{ v.WhomtoMeet }}</td>
+                                <td>{{ v.EnterDate }}</td>
+                                <td>
+                                    {% if v.remark %}
+                                        <span class="badge badge-neutral">Checked Out</span>
+                                    {% else %}
+                                        <span class="badge badge-success">Inside</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('visitors.detail', visitor_id=v.ID) }}" class="btn btn-primary btn-sm">View Details</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <p class="empty-state-title">No Visitors Matched "{{ query }}"</p>
+                    <p class="empty-state-desc">Try searching with a partial contact number or surname.</p>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

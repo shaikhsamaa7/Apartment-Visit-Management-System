@@ -1,0 +1,67 @@
+# ==============================================================================
+# AVMS – Git Ignore Rules
+# ==============================================================================
+
+# ─── Secrets & local configuration ───────────────────────────────────────────
+.env
+!.env.example          # Keep the example template
+
+# ─── SQLite database files ────────────────────────────────────────────────────
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+instance/*.db
+
+# ─── Python bytecode & caches ─────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ─── Python packaging ─────────────────────────────────────────────────────────
+build/
+dist/
+*.egg-info/
+*.egg
+
+# ─── Virtual environments ─────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+
+# ─── Testing & coverage ───────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+.tox/
+
+# ─── IDE / editor artefacts ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ─── OS thumbnails / metadata ────────────────────────────────────────────────
+desktop.ini
+ehthumbs.db
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Uploads / user data ──────────────────────────────────────────────────────
+static/uploads/
+uploads/
+
+# ─── Old PHP backup (kept outside repo, not published) ───────────────────────
+_backup_original_php/
+avms_python/
+avms/
+SQL\ File/

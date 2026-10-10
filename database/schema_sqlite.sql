@@ -1,0 +1,52 @@
+-- SQLite schema preserving exact table and column definitions of avmsdb.sql
+CREATE TABLE IF NOT EXISTS tbladmin (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    AdminName VARCHAR(45) DEFAULT NULL,
+    UserName VARCHAR(45) UNIQUE DEFAULT NULL,
+    MobileNumber BIGINT DEFAULT NULL,
+    Email VARCHAR(120) DEFAULT NULL,
+    Password VARCHAR(120) DEFAULT NULL,
+    AdminRegdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tblcategory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoryName VARCHAR(120) DEFAULT NULL,
+    creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tblvisitor (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoryName VARCHAR(120) DEFAULT NULL,
+    VisitorName VARCHAR(120) DEFAULT NULL,
+    MobileNumber BIGINT DEFAULT NULL,
+    Address VARCHAR(250) DEFAULT NULL,
+    Apartment VARCHAR(120) NOT NULL,
+    Floor VARCHAR(120) NOT NULL,
+    WhomtoMeet VARCHAR(120) DEFAULT NULL,
+    ReasontoMeet VARCHAR(120) DEFAULT NULL,
+    EnterDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    remark VARCHAR(255) DEFAULT NULL,
+    outtime TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS tblvisitorpass (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    passnumber BIGINT DEFAULT NULL,
+    categoryName VARCHAR(120) DEFAULT NULL,
+    VisitorName VARCHAR(120) DEFAULT NULL,
+    MobileNumber BIGINT DEFAULT NULL,
+    Address VARCHAR(250) DEFAULT NULL,
+    Apartment VARCHAR(120) NOT NULL,
+    Floor VARCHAR(120) NOT NULL,
+    passDetails VARCHAR(120) DEFAULT NULL,
+    creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fromDate DATE DEFAULT NULL,
+    toDate DATE NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_visitor_enterdate ON tblvisitor(EnterDate);
+CREATE INDEX IF NOT EXISTS idx_visitor_mobile ON tblvisitor(MobileNumber);
+CREATE INDEX IF NOT EXISTS idx_visitor_name ON tblvisitor(VisitorName);
+CREATE INDEX IF NOT EXISTS idx_pass_creationdate ON tblvisitorpass(creationDate);
+CREATE INDEX IF NOT EXISTS idx_pass_number ON tblvisitorpass(passnumber);

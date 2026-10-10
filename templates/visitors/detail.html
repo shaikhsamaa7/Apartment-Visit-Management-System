@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Visitor #{{ visitor.ID }} Details{% endblock %}
+{% block page_heading %}Visitor Details & Checkout{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 16px;">
+        <a href="{{ url_for('visitors.manage') }}" class="btn btn-secondary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Back to Visitor Registry</span>
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title">{{ visitor.VisitorName }}</h2>
+                <p class="card-subtitle">Visitor ID #{{ visitor.ID }} &bull; Category: {{ visitor.categoryName }}</p>
+            </div>
+            <div>
+                {% if visitor.remark %}
+                    <span class="badge badge-neutral" style="font-size: 0.85rem; padding: 6px 12px;">Checked Out</span>
+                {% else %}
+                    <span class="badge badge-success" style="font-size: 0.85rem; padding: 6px 12px;">Currently Inside Premises</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Metadata Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px;">
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Contact Number</div>
+                    <div style="font-size: 1rem; font-weight: 600; margin-top: 4px;">{{ visitor.MobileNumber }}</div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Destination Unit</div>
+                    <div style="font-size: 1rem; font-weight: 600; margin-top: 4px;">{{ visitor.Apartment }} (Floor {{ visitor.Floor }})</div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Resident to Meet</div>
+                    <div style="font-size: 1rem; font-weight: 600; margin-top: 4px;">{{ visitor.WhomtoMeet }}</div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Reason / Purpose</div>
+                    <div style="font-size: 1rem; font-weight: 600; margin-top: 4px;">{{ visitor.ReasontoMeet or 'Not specified' }}</div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Entry Timestamp</div>
+                    <div style="font-size: 0.95rem; font-weight: 600; margin-top: 4px;">{{ visitor.EnterDate }}</div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Origin Address</div>
+                    <div style="font-size: 0.95rem; font-weight: 600; margin-top: 4px;">{{ visitor.Address or 'Not provided' }}</div>
+                </div>
+            </div>
+
+            <!-- Checkout Section -->
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 24px; margin-top: 12px;">
+                {% if not visitor.remark %}
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 20px;">
+                        <h3 style="font-size: 1rem; font-weight: 600; color: #1e40af; margin-bottom: 8px;">Record Visitor Checkout</h3>
+                        <p style="font-size: 0.85rem; color: #3b82f6; margin-bottom: 16px;">
+                            Enter an outing remark to check the visitor out of the apartment complex and record their exit timestamp.
+                        </p>
+
+                        <form action="{{ url_for('visitors.detail', visitor_id=visitor.ID) }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                            <div class="form-group">
+                                <label class="form-label" for="remark" style="color: #1e3a8a;">Outing Remark / Notes <span class="required">*</span></label>
+                                <textarea class="form-control" id="remark" name="remark" rows="3" placeholder="e.g. Visit concluded, verified exit at gate 1" required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="background-color: #2563eb;">
+                                <span>Check Out Visitor (Out)</span>
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div style="background: #f8fafc; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px;">
+                        <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-main); margin-bottom: 14px;">Departure Record</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">Outing Remark</span>
+                                <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-main);">{{ visitor.remark }}</span>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block;">Exit Timestamp (Out Time)</span>
+                                <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">{{ visitor.outtime or 'Recorded' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

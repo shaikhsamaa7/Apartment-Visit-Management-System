@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Issue Visitor Pass{% endblock %}
+{% block page_heading %}Pass Generation{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title">Issue New Visitor Pass</h2>
+                <p class="card-subtitle">Generate recurring or term authorization passes for staff, cooks, maids, drivers, or guests</p>
+            </div>
+            <a href="{{ url_for('passes.manage') }}" class="btn btn-secondary btn-sm">Manage Passes</a>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('passes.create') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="category">Visitor Category <span class="required">*</span></label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">-- Choose Category --</option>
+                            {% for c in categories %}
+                                <option value="{{ c.categoryName }}" {% if form_data.category == c.categoryName %}selected{% endif %}>
+                                    {{ c.categoryName }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="visname">Visitor Full Name <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="visname" name="visname" value="{{ form_data.visname or '' }}" placeholder="e.g. Savita Devi" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="mobilenumber">Mobile Contact Number <span class="required">*</span></label>
+                        <input class="form-control" type="tel" id="mobilenumber" name="mobilenumber" value="{{ form_data.mobilenumber or '' }}" placeholder="e.g. 9876543210" pattern="[0-9]{7,15}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="apartment">Apartment / Flat Number <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="apartment" name="apartment" value="{{ form_data.apartment or '' }}" placeholder="e.g. Q-707, B-402" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="floor">Floor <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="floor" name="floor" value="{{ form_data.floor or '' }}" placeholder="e.g. 7" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="passdescription">Pass Description / Purpose <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="passdescription" name="passdescription" value="{{ form_data.passdescription or '' }}" placeholder="e.g. Daily Housekeeping, Car Cleaning" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="fromdate">Validity From Date <span class="required">*</span></label>
+                        <input class="form-control" type="date" id="fromdate" name="fromdate" value="{{ form_data.fromdate or today }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="todate">Validity To Date <span class="required">*</span></label>
+                        <input class="form-control" type="date" id="todate" name="todate" value="{{ form_data.todate or '' }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="address">Visitor Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="2" placeholder="e.g. Sector 22, Noida">{{ form_data.address or '' }}</textarea>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+                    <button type="submit" class="btn btn-primary">Generate Pass</button>
+                    <a href="{{ url_for('passes.manage') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

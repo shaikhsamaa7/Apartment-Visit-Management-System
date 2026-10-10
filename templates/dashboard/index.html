@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Executive Dashboard{% endblock %}
+{% block page_heading %}Property Overview Dashboard{% endblock %}
+
+{% block content %}
+<!-- Quick Action Shortcuts -->
+<div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+    <a href="{{ url_for('visitors.add') }}" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>Check In New Visitor</span>
+    </a>
+    <a href="{{ url_for('passes.create') }}" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        <span>Issue Visitor Pass</span>
+    </a>
+    <a href="{{ url_for('visitors.search') }}" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Quick Visitor Search</span>
+    </a>
+    <a href="{{ url_for('reports.visitors') }}" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>Date-Wise Reports</span>
+    </a>
+</div>
+
+<!-- Key Performance Metric Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Today's Visitors</span>
+            <span class="stat-value">{{ stats.today_visitors }}</span>
+            <span class="stat-sub">Logged today</span>
+        </div>
+        <div class="stat-icon primary">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Yesterday</span>
+            <span class="stat-value">{{ stats.yesterday_visitors }}</span>
+            <span class="stat-sub">Previous day visits</span>
+        </div>
+        <div class="stat-icon info">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Last 7 Days</span>
+            <span class="stat-value">{{ stats.last7days_visitors }}</span>
+            <span class="stat-sub">Trailing weekly volume</span>
+        </div>
+        <div class="stat-icon warning">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Total Visitors</span>
+            <span class="stat-value">{{ stats.total_visitors }}</span>
+            <span class="stat-sub">Lifetime record</span>
+        </div>
+        <div class="stat-icon primary">
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Currently Inside</span>
+            <span class="stat-value" style="color: var(--status-success);">{{ stats.currently_inside }}</span>
+            <span class="stat-sub">Active in premises</span>
+        </div>
+        <div class="stat-icon success">
+            <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Active Passes</span>
+            <span class="stat-value">{{ stats.active_passes }}</span>
+            <span class="stat-sub">Valid passes</span>
+        </div>
+        <div class="stat-icon success">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><polyline points="9 11 12 14 17 9"></polyline></svg>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Total Passes</span>
+            <span class="stat-value">{{ stats.total_passes }}</span>
+            <span class="stat-sub">All passes issued</span>
+        </div>
+        <div class="stat-icon info">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <span class="stat-label">Categories</span>
+            <span class="stat-value">{{ stats.total_categories }}</span>
+            <span class="stat-sub">Managed categories</span>
+        </div>
+        <div class="stat-icon primary">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line></svg>
+        </div>
+    </div>
+</div>
+
+<!-- Two-Column Activity Feeds -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 24px;">
+    <!-- Recent Visitors Card -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Recent Visitor Check-Ins</h3>
+                <p class="card-subtitle">Latest visitors entered the premises</p>
+            </div>
+            <a href="{{ url_for('visitors.manage') }}" class="btn btn-secondary btn-sm">View All</a>
+        </div>
+        <div class="table-responsive">
+            {% if recent_visitors %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Visitor</th>
+                            <th>Category</th>
+                            <th>Apartment</th>
+                            <th>Whom To Meet</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in recent_visitors %}
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">{{ v.VisitorName }}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">{{ v.EnterDate }}</div>
+                                </td>
+                                <td><span class="badge badge-neutral">{{ v.categoryName }}</span></td>
+                                <td>{{ v.Apartment }} (Fl {{ v.Floor }})</td>
+                                <td>{{ v.WhomtoMeet }}</td>
+                                <td>
+                                    {% if v.remark %}
+                                        <span class="badge badge-neutral">Checked Out</span>
+                                    {% else %}
+                                        <span class="badge badge-success">Inside</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('visitors.detail', visitor_id=v.ID) }}" class="btn btn-secondary btn-sm">Details</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <p class="empty-state-title">No Visitors Recorded Yet</p>
+                    <p class="empty-state-desc">Begin logging apartment guest and service visits using the button above.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recent Passes & Category Summary -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Recent Passes Issued</h3>
+                    <p class="card-subtitle">Active and issued resident visitor passes</p>
+                </div>
+                <a href="{{ url_for('passes.manage') }}" class="btn btn-secondary btn-sm">View All</a>
+            </div>
+            <div class="table-responsive">
+                {% if recent_passes %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Pass #</th>
+                                <th>Visitor</th>
+                                <th>Category</th>
+                                <th>Valid Until</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in recent_passes %}
+                                <tr>
+                                    <td><code>#{{ p.passnumber }}</code></td>
+                                    <td><strong>{{ p.VisitorName }}</strong></td>
+                                    <td><span class="badge badge-neutral">{{ p.categoryName }}</span></td>
+                                    <td>{{ p.toDate }}</td>
+                                    <td>
+                                        {% if p.toDate|string >= today %}
+                                            <span class="badge badge-success">Active</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Expired</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('passes.detail', pass_id=p.ID) }}" class="btn btn-secondary btn-sm">Pass</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-state">
+                        <p class="empty-state-title">No Passes Created</p>
+                        <p class="empty-state-desc">Generate monthly or regular visitor passes for domestic helpers and staff.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Category Distribution -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Visits by Category</h3>
+                    <p class="card-subtitle">Breakdown of incoming visits</p>
+                </div>
+                <a href="{{ url_for('categories.manage') }}" class="btn btn-secondary btn-sm">Manage</a>
+            </div>
+            <div class="card-body" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                {% if category_breakdown %}
+                    {% for c in category_breakdown %}
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border-subtle); padding: 8px 14px; border-radius: var(--radius-sm); min-width: 140px; flex: 1;">
+                            <span style="font-weight: 500; font-size: 0.85rem;">{{ c.categoryName }}</span>
+                            <span class="badge badge-primary" style="background: var(--brand-primary); color: #fff;">{{ c.count }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">No category visit data available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

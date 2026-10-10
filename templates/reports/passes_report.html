@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Between Dates Pass Report{% endblock %}
+{% block page_heading %}Date-Wise Pass Reports{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">Generate Between-Dates Pass Report</h2>
+            <p class="card-subtitle">Review passes created within a selected period with CSV export</p>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('reports.passes') }}" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                <label class="form-label" for="fromdate">From Date <span class="required">*</span></label>
+                <input class="form-control" type="date" id="fromdate" name="fromdate" value="{{ from_date }}" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                <label class="form-label" for="todate">To Date <span class="required">*</span></label>
+                <input class="form-control" type="date" id="todate" name="todate" value="{{ to_date }}" required>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+                {% if has_searched and records %}
+                    <button type="submit" name="export" value="csv" class="btn btn-secondary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Export CSV</span>
+                    </button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {% if has_searched %}
+        <div style="padding: 16px 24px; background: #f8fafc; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); display: flex; gap: 24px; flex-wrap: wrap; align-items: center;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">
+                Creation Window: <span style="color: var(--brand-primary);">{{ from_date }}</span> to <span style="color: var(--brand-primary);">{{ to_date }}</span>
+            </div>
+            <div style="display: flex; gap: 14px;">
+                <span class="badge badge-neutral">Total Passes: {{ stats.total }}</span>
+                <span class="badge badge-success">Currently Active: {{ stats.active }}</span>
+                <span class="badge badge-danger">Expired: {{ stats.expired }}</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            {% if records %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">S.No</th>
+                            <th>Pass Number</th>
+                            <th>Visitor Name</th>
+                            <th>Category</th>
+                            <th>Apartment</th>
+                            <th>Valid Dates</th>
+                            <th>Creation Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in records %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><span style="font-family: monospace; font-weight: 700;">#{{ p.passnumber }}</span></td>
+                                <td><strong>{{ p.VisitorName }}</strong></td>
+                                <td><span class="badge badge-neutral">{{ p.categoryName }}</span></td>
+                                <td>{{ p.Apartment }} (Fl {{ p.Floor }})</td>
+                                <td>{{ p.fromDate }} &rarr; {{ p.toDate }}</td>
+                                <td>{{ p.creationDate }}</td>
+                                <td>
+                                    {% if p.toDate|string >= today %}
+                                        <span class="badge badge-success">Active</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Expired</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('passes.detail', pass_id=p.ID) }}" class="btn btn-secondary btn-sm">View Pass</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <p class="empty-state-title">No Passes Created in Selected Date Range</p>
+                    <p class="empty-state-desc">Try expanding the date interval.</p>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

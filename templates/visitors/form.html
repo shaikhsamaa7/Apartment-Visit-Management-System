@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Register New Visitor{% endblock %}
+{% block page_heading %}Visitor Registration{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title">Register Incoming Visitor</h2>
+                <p class="card-subtitle">Log arrival details for apartment visitors, guests, and delivery personnel</p>
+            </div>
+            <a href="{{ url_for('visitors.manage') }}" class="btn btn-secondary btn-sm">View Visitor Log</a>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('visitors.add') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="category">Visitor Category <span class="required">*</span></label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">-- Choose Category --</option>
+                            {% for c in categories %}
+                                <option value="{{ c.categoryName }}" {% if form_data.category == c.categoryName %}selected{% endif %}>
+                                    {{ c.categoryName }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="visname">Visitor Full Name <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="visname" name="visname" value="{{ form_data.visname or '' }}" placeholder="e.g. John Doe" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="mobilenumber">Mobile Contact Number <span class="required">*</span></label>
+                        <input class="form-control" type="tel" id="mobilenumber" name="mobilenumber" value="{{ form_data.mobilenumber or '' }}" placeholder="e.g. 9876543210" pattern="[0-9]{7,15}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="apartment">Apartment / Flat Number <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="apartment" name="apartment" value="{{ form_data.apartment or '' }}" placeholder="e.g. A-402, Q-707" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="floor">Floor <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="floor" name="floor" value="{{ form_data.floor or '' }}" placeholder="e.g. 4, Ground, 7" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="whomtomeet">Resident to Meet (Whom to Meet) <span class="required">*</span></label>
+                        <input class="form-control" type="text" id="whomtomeet" name="whomtomeet" value="{{ form_data.whomtomeet or '' }}" placeholder="e.g. Mr. Sharma" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="reasontomeet">Reason to Meet / Purpose</label>
+                    <input class="form-control" type="text" id="reasontomeet" name="reasontomeet" value="{{ form_data.reasontomeet or '' }}" placeholder="e.g. Personal visit, Maintenance, Delivery">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="address">Visitor Residential / Origin Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="2" placeholder="e.g. 123 Main Street, Sector 15">{{ form_data.address or '' }}</textarea>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+                    <button type="submit" class="btn btn-primary">Check In Visitor</button>
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

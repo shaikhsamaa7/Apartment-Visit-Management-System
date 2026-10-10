@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Visitor Pass #{{ vpass.passnumber }}{% endblock %}
+{% block page_heading %}Visitor Pass Authorization{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;" class="no-print">
+    <a href="{{ url_for('passes.manage') }}" class="btn btn-secondary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>Back to Passes List</span>
+    </a>
+
+    <button onclick="printPassCard()" class="btn btn-primary btn-print">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        <span>Print Pass Badge</span>
+    </button>
+</div>
+
+<!-- Printable Pass Ticket Card -->
+<div class="pass-ticket-card" id="printablePass">
+    <div class="pass-header">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="logo-badge" style="width: 28px; height: 28px; font-size: 0.8rem;">AV</span>
+                <span style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">APARTMENT RESIDENTIAL COMPLEX</span>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">Official Security Gate Entry Authorization Pass</div>
+        </div>
+        <div style="text-align: right;">
+            <div class="pass-number-pill">#{{ vpass.passnumber }}</div>
+            <div style="margin-top: 4px;">
+                {% if is_active %}
+                    <span class="badge badge-success">VALID PASS</span>
+                {% else %}
+                    <span class="badge badge-danger">EXPIRED</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Visitor Photo / Identity Section -->
+    <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+        <div style="width: 80px; height: 80px; background: #e2e8f0; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; color: #64748b; border: 1px solid #cbd5e1;">
+            {{ vpass.VisitorName[0]|upper }}
+        </div>
+        <div>
+            <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">{{ vpass.VisitorName }}</h2>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span class="badge badge-neutral" style="font-size: 0.85rem;">{{ vpass.categoryName }}</span>
+                <span style="font-size: 0.9rem; color: var(--text-muted);">Phone: <strong>{{ vpass.MobileNumber }}</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="pass-meta-grid">
+        <div class="pass-meta-item">
+            <label>Destination Apartment</label>
+            <span>Unit {{ vpass.Apartment }} (Floor {{ vpass.Floor }})</span>
+        </div>
+
+        <div class="pass-meta-item">
+            <label>Pass Scope / Purpose</label>
+            <span>{{ vpass.passDetails }}</span>
+        </div>
+
+        <div class="pass-meta-item">
+            <label>Valid From</label>
+            <span>{{ vpass.fromDate }}</span>
+        </div>
+
+        <div class="pass-meta-item">
+            <label>Valid Until (Expiry)</label>
+            <span>{{ vpass.toDate }}</span>
+        </div>
+
+        <div class="pass-meta-item" style="grid-column: 1 / -1;">
+            <label>Residential / Agency Address</label>
+            <span style="font-size: 0.9rem; font-weight: 500;">{{ vpass.Address or 'Not specified' }}</span>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px; padding-top: 18px; border-top: 1px dashed #cbd5e1; font-size: 0.78rem; color: var(--text-muted);">
+        <div>
+            <div>Issued On: {{ vpass.creationDate }}</div>
+            <div>Security Verification: Authorized by Management Office</div>
+        </div>
+        <div style="text-align: right; border-top: 1px solid #000; width: 140px; padding-top: 4px;">
+            Authorized Signature
+        </div>
+    </div>
+</div>
+{% endblock %}

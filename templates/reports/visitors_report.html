@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Between Dates Visitor Report{% endblock %}
+{% block page_heading %}Date-Wise Visitor Reports{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">Generate Between-Dates Visitor Report</h2>
+            <p class="card-subtitle">Filter visitor activity across custom date intervals with CSV export</p>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('reports.visitors') }}" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                <label class="form-label" for="fromdate">From Date <span class="required">*</span></label>
+                <input class="form-control" type="date" id="fromdate" name="fromdate" value="{{ from_date }}" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                <label class="form-label" for="todate">To Date <span class="required">*</span></label>
+                <input class="form-control" type="date" id="todate" name="todate" value="{{ to_date }}" required>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+                {% if has_searched and records %}
+                    <button type="submit" name="export" value="csv" class="btn btn-secondary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Export CSV</span>
+                    </button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {% if has_searched %}
+        <!-- Summary Stats Ribbon -->
+        <div style="padding: 16px 24px; background: #f8fafc; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); display: flex; gap: 24px; flex-wrap: wrap; align-items: center;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">
+                Report Period: <span style="color: var(--brand-primary);">{{ from_date }}</span> to <span style="color: var(--brand-primary);">{{ to_date }}</span>
+            </div>
+            <div style="display: flex; gap: 14px;">
+                <span class="badge badge-neutral">Total Visits: {{ stats.total }}</span>
+                <span class="badge badge-success">Completed: {{ stats.checked_out }}</span>
+                <span class="badge badge-warning">Currently Inside: {{ stats.inside }}</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            {% if records %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">S.No</th>
+                            <th>Visitor Name</th>
+                            <th>Category</th>
+                            <th>Contact</th>
+                            <th>Apartment</th>
+                            <th>Whom to Meet</th>
+                            <th>Entry Time</th>
+                            <th>Out Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in records %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><strong>{{ v.VisitorName }}</strong></td>
+                                <td><span class="badge badge-neutral">{{ v.categoryName }}</span></td>
+                                <td><code>{{ v.MobileNumber }}</code></td>
+                                <td>{{ v.Apartment }} (Fl {{ v.Floor }})</td>
+                                <td>{{ v.WhomtoMeet }}</td>
+                                <td>{{ v.EnterDate }}</td>
+                                <td>{{ v.outtime or '-' }}</td>
+                                <td>
+                                    {% if v.remark %}
+                                        <span class="badge badge-neutral">Checked Out</span>
+                                    {% else %}
+                                        <span class="badge badge-success">Inside</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('visitors.detail', visitor_id=v.ID) }}" class="btn btn-secondary btn-sm">Details</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <p class="empty-state-title">No Visitors Found in Selected Range</p>
+                    <p class="empty-state-desc">Try widening the date interval between From Date and To Date.</p>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
